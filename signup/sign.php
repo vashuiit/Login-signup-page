@@ -2,10 +2,12 @@
 
 $success=0;
 $user=0;
+$invalid=0;
 if($_SERVER['REQUEST_METHOD']=='POST'){
     include 'connect.php';
     $username=$_POST['username'];
     $password=$_POST['password'];
+    $cpassword=$_POST['cpassword'];
 
   $sql="Select*from `registeration` where 
   username='$username'";
@@ -15,16 +17,19 @@ if($result){
     if($num>0){
         $user=1;
     }else{
+      if($password===$cpassword){
         $sql="insert into `registeration`(username,password)
         values('$username','$password')";
         $result=mysqli_query($con,$sql);
         if($result){
             $success=1;
+            header('location:login.php');
         }
-        else{
-            die(mysqli_error($con));
+       } else{
+            $invalid=1;
         }
     }
+  
 
 }
 }
@@ -55,6 +60,13 @@ if($user){
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>';
 }
+
+if($invalid){
+  echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>Oh no Sorry , </strong> Password not matching
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>';
+}
   ?>
 
 <?php
@@ -84,6 +96,15 @@ if($success){
     <input type="password" class="form-control" name="password" placeholder="Enter Your Password">
   </div>
  
+
+
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Confirm Password</label>
+    <input type="password" class="form-control" name="cpassword" placeholder="Confirm Password">
+  </div>
+ 
+
+
   <button type="submit" class="btn btn-primary w-100">Sign Up</button>
 </form>
 
